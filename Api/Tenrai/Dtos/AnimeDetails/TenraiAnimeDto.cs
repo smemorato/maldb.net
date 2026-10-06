@@ -28,7 +28,7 @@ public class TenraiAnimeDto
     public string? Background { get; set; }
     public string? Season { get; set; }
     public int? Year { get; set; }
-    public TenraiBroadcastDto? BroadcastDto { get; set; }
+    public TenraiBroadcastDto? Broadcast { get; set; }
     public List<TenraiAnimeCompanyDto> Producers { get; set; } = new List<TenraiAnimeCompanyDto>();
     public List<TenraiAnimeCompanyDto> Licensors { get; set; } = new List<TenraiAnimeCompanyDto>();
     public List<TenraiAnimeCompanyDto> Studios { get; set; } = new List<TenraiAnimeCompanyDto>();

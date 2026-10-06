@@ -173,28 +173,43 @@ public class AnimeDetailsUpdater: AnimeUpdaterBase<TenraiAnimeDto>
         var animeOp = item.Theme.Openings ?? new List<string>();
         var animeEd = item.Theme.Endings ?? new List<string>();
 
-        var opInDb = anime.AnimeThemes.Where( at => at.Type == "op" && at.Updated == false).Select(at => at.Title).ToHashSet();
-        var edInDb = anime.AnimeThemes.Where( at => at.Type == "ed" && at.Updated == false).Select(at => at.Title).ToHashSet();
+        var opInDb = anime.AnimeThemes.Where( at => at.Type == "op" ).ToHashSet();
+        var edInDb = anime.AnimeThemes.Where( at => at.Type == "ed" ).ToHashSet();
 
 
-        var newOp = animeOp.Where(op => !opInDb.Contains(op));
-        var newEd = animeEd.Where(ed => !edInDb.Contains(ed));
+        var newOp = animeOp.Where(op => !opInDb.Select(x => x.Title).ToList().Contains(op));
+        var newEd = animeEd.Where(ed => !edInDb.Select(x => x.Title).Contains(ed));
 
 
-        
-        var removedOp = opInDb.Where(op => !animeOp.Contains(op));
-        var removedEd = edInDb.Where(ed => !animeEd.Contains(ed));
-
-        // Remove openings
-        foreach (var title in removedOp)
+        //TODO For now I won't be deleting songs
+        if (false)
         {
-            var theme = anime.AnimeThemes.First(at =>
-                at.Type == "op" &&
-                !at.Updated &&
-                at.Title == title);
+            var removedOp = opInDb.Where(op => !animeOp.Contains(op.Title) && op.Updated == true).Select(op => op.Title).ToList();
+            var removedEd = edInDb.Where(ed => !animeEd.Contains(ed.Title) && ed.Updated == true).Select(ed => ed.Title).ToList();
 
-            anime.AnimeThemes.Remove(theme);
+            // Remove openings
+            foreach (var title in removedOp)
+            {
+                var theme = anime.AnimeThemes.First(at =>
+                    at.Type == "op" &&
+                    !at.Updated &&
+                    at.Title == title);
+
+                anime.AnimeThemes.Remove(theme);
+             }
+
+                     // Remove endings
+            foreach (var title in removedEd)
+            {
+                var theme = anime.AnimeThemes.First(at =>
+                    at.Type == "ed" &&
+                    !at.Updated &&
+                    at.Title == title);
+
+                anime.AnimeThemes.Remove(theme);
+            }
         }
+
 
         // Add openings
         foreach (var title in newOp)
@@ -207,16 +222,7 @@ public class AnimeDetailsUpdater: AnimeUpdaterBase<TenraiAnimeDto>
             });
         }
 
-        // Remove endings
-        foreach (var title in removedEd)
-        {
-            var theme = anime.AnimeThemes.First(at =>
-                at.Type == "ed" &&
-                !at.Updated &&
-                at.Title == title);
 
-            anime.AnimeThemes.Remove(theme);
-        }
 
         // Add endings
         foreach (var title in newEd)
@@ -293,7 +299,7 @@ public class AnimeDetailsUpdater: AnimeUpdaterBase<TenraiAnimeDto>
         foreach ( var companyDto in companyDtos)
         {
             var animeCompany = existingAnimeCompanies
-                .FirstOrDefault(ac => ac.Company.MalId == companyDto.Mal_Id);
+                .FirstOrDefault(ac => ac.Company.MalId == companyDto.Mal_Id && ac.Role == role);
 
             if (animeCompany == null)
             {

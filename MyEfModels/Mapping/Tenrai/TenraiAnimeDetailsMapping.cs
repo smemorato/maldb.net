@@ -50,8 +50,8 @@ public static class TenraiAnimeDetailsMapping
             StartSeasonYear = dto.Year,
             StartSeasonSeason = dto.Season,
 
-            BroadcastWeekday = dto.BroadcastDto?.Day,
-            BroadcastTime = dto.BroadcastDto?.Time,
+            BroadcastWeekday = dto.Broadcast?.Day,
+            BroadcastTime = dto.Broadcast?.Time,
             LastTenraiUpdate = DateOnly.FromDateTime(DateTime.UtcNow)
 
 
@@ -161,8 +161,8 @@ public static class TenraiAnimeDetailsMapping
             anime.BackgroundInformation = dto.Background;
             anime.StartSeasonYear = dto.Year;
             anime.StartSeasonSeason = dto.Season;
-            anime.BroadcastWeekday = dto.BroadcastDto?.Day;
-            anime.BroadcastTime = dto.BroadcastDto?.Time;
+            anime.BroadcastWeekday = dto.Broadcast?.Day;
+            anime.BroadcastTime = dto.Broadcast?.Time;
             anime.LastTenraiUpdate = DateOnly.FromDateTime(DateTime.UtcNow);
     }
 }

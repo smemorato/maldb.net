@@ -56,6 +56,10 @@ public class Anime
     public ICollection<AnimeTheme> AnimeThemes { get; set; } 
         = new List<AnimeTheme>();
 
+    public ICollection<AnimeReview> AnimeReviews { get; set; }  = new List<AnimeReview> {};
+    public ICollection<AnimeEpisode> AnimeEpisodes { get; set; }  = new List<AnimeEpisode> {};
+
+
     public ICollection<UserList> UserLists { get; set; } = new List<UserList>();
     public ICollection<AnimeStaff> Staff { get; set; } = new List<AnimeStaff>();
     public ICollection<AnimeCharacter> AnimeCharacters { get; set; } = new List<AnimeCharacter>();

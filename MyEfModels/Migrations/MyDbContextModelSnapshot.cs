@@ -247,6 +247,64 @@ namespace MyEfModels.Migrations
                     b.ToTable("AnimeCompanies");
                 });
 
+            modelBuilder.Entity("MyEfModels.Entities.AnimeEpisode", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("Aired")
+                        .HasColumnType("text");
+
+                    b.Property<int>("AnimeId")
+                        .HasColumnType("integer");
+
+                    b.Property<int?>("Duration")
+                        .HasColumnType("integer");
+
+                    b.Property<int>("EpisodeNumber")
+                        .HasColumnType("integer");
+
+                    b.Property<bool>("Filler")
+                        .HasColumnType("boolean");
+
+                    b.Property<string>("ForumUrl")
+                        .HasColumnType("text");
+
+                    b.Property<bool>("Recap")
+                        .HasColumnType("boolean");
+
+                    b.Property<int?>("Replies")
+                        .HasColumnType("integer");
+
+                    b.Property<decimal?>("Score")
+                        .HasColumnType("numeric");
+
+                    b.Property<string>("Synopsis")
+                        .HasColumnType("text");
+
+                    b.Property<string>("Title")
+                        .HasColumnType("text");
+
+                    b.Property<string>("TitleJapanese")
+                        .HasColumnType("text");
+
+                    b.Property<string>("TitleRomanji")
+                        .HasColumnType("text");
+
+                    b.Property<string>("Url")
+                        .HasColumnType("text");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("AnimeId", "EpisodeNumber")
+                        .IsUnique();
+
+                    b.ToTable("AnimeEpisodes");
+                });
+
             modelBuilder.Entity("MyEfModels.Entities.AnimeExternalLink", b =>
                 {
                     b.Property<int>("Id")
@@ -355,6 +413,67 @@ namespace MyEfModels.Migrations
                         .IsUnique();
 
                     b.ToTable("AnimeRelations");
+                });
+
+            modelBuilder.Entity("MyEfModels.Entities.AnimeReview", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+
+                    b.Property<int>("AnimeId")
+                        .HasColumnType("integer");
+
+                    b.Property<int?>("Confusing")
+                        .HasColumnType("integer");
+
+                    b.Property<int?>("Creative")
+                        .HasColumnType("integer");
+
+                    b.Property<string>("Date")
+                        .HasColumnType("text");
+
+                    b.Property<int?>("Funny")
+                        .HasColumnType("integer");
+
+                    b.Property<int?>("Informative")
+                        .HasColumnType("integer");
+
+                    b.Property<int?>("LoveIt")
+                        .HasColumnType("integer");
+
+                    b.Property<int>("MalId")
+                        .HasColumnType("integer");
+
+                    b.Property<int?>("Nice")
+                        .HasColumnType("integer");
+
+                    b.Property<int?>("Overall")
+                        .HasColumnType("integer");
+
+                    b.Property<string>("Review")
+                        .HasColumnType("text");
+
+                    b.Property<int?>("Score")
+                        .HasColumnType("integer");
+
+                    b.PrimitiveCollection<List<string>>("Tags")
+                        .IsRequired()
+                        .HasColumnType("text[]");
+
+                    b.Property<string>("Type")
+                        .HasColumnType("text");
+
+                    b.Property<int?>("WellWritten")
+                        .HasColumnType("integer");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("AnimeId");
+
+                    b.ToTable("AnimeReviews");
                 });
 
             modelBuilder.Entity("MyEfModels.Entities.AnimeStaff", b =>
@@ -711,6 +830,17 @@ namespace MyEfModels.Migrations
                     b.Navigation("Company");
                 });
 
+            modelBuilder.Entity("MyEfModels.Entities.AnimeEpisode", b =>
+                {
+                    b.HasOne("MyEfModels.Entities.Anime", "Anime")
+                        .WithMany("AnimeEpisodes")
+                        .HasForeignKey("AnimeId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Anime");
+                });
+
             modelBuilder.Entity("MyEfModels.Entities.AnimeExternalLink", b =>
                 {
                     b.HasOne("MyEfModels.Entities.Anime", "Anime")
@@ -779,6 +909,17 @@ namespace MyEfModels.Migrations
                     b.Navigation("Anime2");
                 });
 
+            modelBuilder.Entity("MyEfModels.Entities.AnimeReview", b =>
+                {
+                    b.HasOne("MyEfModels.Entities.Anime", "Anime")
+                        .WithMany("AnimeReviews")
+                        .HasForeignKey("AnimeId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Anime");
+                });
+
             modelBuilder.Entity("MyEfModels.Entities.AnimeStaff", b =>
                 {
                     b.HasOne("MyEfModels.Entities.Anime", "Anime")
@@ -834,7 +975,11 @@ namespace MyEfModels.Migrations
 
                     b.Navigation("AnimeCompanies");
 
+                    b.Navigation("AnimeEpisodes");
+
                     b.Navigation("AnimeGenres");
+
+                    b.Navigation("AnimeReviews");
 
                     b.Navigation("AnimeThemes");
 

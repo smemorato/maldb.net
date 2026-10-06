@@ -25,6 +25,7 @@ public class AnimeCharacterUpdater: AnimeUpdaterBase<List<TenraiAnimeCharacterDt
 
     public override async Task ApplyUpdate(int id, List<TenraiAnimeCharacterDto> dtos)
     {
+        Console.WriteLine($"Updating Anime {id}");
         var anime = await _db.Animes
                 .Include(a => a.AnimeCharacters)
                     .ThenInclude(ac => ac.Character)

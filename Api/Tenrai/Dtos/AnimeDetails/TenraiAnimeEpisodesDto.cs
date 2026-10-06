@@ -1,8 +1,8 @@
 namespace Api.Tenrai.Dtos.Anime;
 
-public class TenraiAnimeEpisodesDto
+public class TenraiAnimeEpisodeDto
 {
-    public int Mal_id { get; set; }
+    public int Mal_Id { get; set; }
     public required string Url { get; set; }
     public string?  Title {get; set; }
     public string? Title_Japanese { get; set; }

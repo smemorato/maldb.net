@@ -10,6 +10,7 @@ using Api.Mal;
 using Api.Tenrai;
 using Dbseeder.Services.Shared;
 using Dbseeder.Services.Updaters;
+using Challenges;
 
 
 class Program
@@ -56,6 +57,12 @@ class Program
             .AddTransientHttpErrorPolicy(policy =>
                 policy.WaitAndRetryAsync(3, retry => TimeSpan.FromSeconds(2)));
 
+        
+        
+        builder.Services.AddHttpClient<AnimeChallengeRepository>();
+        
+        builder.Services.AddScoped<MatchingChallenge>();
+
 
 
         
@@ -64,6 +71,10 @@ class Program
 
 
         var app = builder.Build();
+
+
+
+
 
 
         using (var scope = app.Services.CreateScope())
@@ -86,23 +97,64 @@ class Program
             var PersonDetailsUpdate = scope.ServiceProvider.GetRequiredService<PersonDetailsService>();
 
             // await rankingImporter.ImportRankingAsync("all");
-            await userListimporter.ImportUserListAsync("","smemorato");
+            // await userListimporter.ImportUserListAsync("","smemorato");
 
 
             // 1. Resolve anime IDs from user list
-            var ids = await resolver.ResolveFromAnimeTable(lastUpdate: new DateOnly(2026, 8, 2));
+            //var ids = await resolver.ResolveFromAnimeTable(username: "smemorato", startDate: "2024-06-01");
+            var ids = await resolver.ResolveFromAnimeTable(username: "smemorato",startDate: "2013-07-06");
+            var characterIds = await resolver.ResolveFromCharacterTable(username: "smemorato",startDate: "2013-07-06");
 
             // 2. Create the updater manually
-            var AnimeDetailsupdater = new AnimeDetailsUpdater(tenrai, db);
+            var animeDetailsupdater = new AnimeDetailsUpdater(tenrai, db);
+            var animeRecommendationsUpdater = new AnimeRecommendationUpdater(tenrai, db);
+            var animeCharacterUpdater = new AnimeCharacterUpdater(tenrai, db);
+            var animeStaffupdater = new AnimeStaffUpdater(tenrai, db);
+            var animeReviewsUpdater = new AnimeReviewsUpdater(tenrai, db);
+            var animeEpisodesUpdater = new AnimeEpisodesUpdater(tenrai, db);
+            var characterDetailsUpdater = new CharacterDetailsUpdater(tenrai, db);
+
 
             // 3. Run the orchestrator
-            await tenraiOrchestrator.RunAsync(ids, AnimeDetailsupdater);
+            await tenraiOrchestrator.RunAsync(ids, animeDetailsupdater);
+            // await tenraiOrchestrator.RunAsync(ids, animeRecommendationsUpdater);
+            // await tenraiOrchestrator.RunAsync(ids, animeStaffupdater);
+            // await tenraiOrchestrator.RunAsync(ids, animeReviewsUpdater);
+            // await tenraiOrchestrator.RunAsync(ids, animeCharacterUpdater);
+            // await tenraiOrchestrator.RunAsync(ids, animeDetailsupdater);
+            //await tenraiOrchestrator.RunAsync(characterIds, characterDetailsUpdater)
 
 
             // await animeCharacterUpdate.UpdateAnimeCharacter("smemorato");
             // await animeStaffUpdate.UpdateAnimeStaff("smemorato");
-            await characterDetailsUpdate.UpdateCharacterDetails("smemorato");
+            // await characterDetailsUpdate.UpdateCharacterDetails("smemorato");
 
+
+
+
+        }
+
+
+
+        using (var scope = app.Services.CreateScope())
+        {
+                        // 2. Resolve MatchingChallenge from the scope
+            var matchingChallenge = scope.ServiceProvider.GetRequiredService<MatchingChallenge>();
+
+            // 3. Execute the challenge with your arguments
+            string mediaType = "TV"; // or "Movie"
+            DateOnly startDate = new DateOnly(2025, 6, 26);
+            string username = "smemorato";
+
+            try
+            {
+                await matchingChallenge.RunMatchingChallenge(mediaType, startDate, username, 13);
+                Console.WriteLine("Matching Challenge completed successfully!");
+            }
+            catch (KeyNotFoundException ex)
+            {
+                Console.WriteLine($"Error: {ex.Message}");
+            }
         }
 
     }

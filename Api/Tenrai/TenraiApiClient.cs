@@ -131,10 +131,22 @@ public class TenraiApiClient : ITenraiApiClient
         string url = $"anime/{id}/full";
         return GetAsync<TenraiAnimeResponseDto>(url);
     }
+
+    public Task<TenraiAnimeEpisodesResponseDto?> GetAnimeEpisodesAsync(int id, int page = 1)
+    {
+        string url = $"anime/{id}/episodes";
+        return GetAsync<TenraiAnimeEpisodesResponseDto>(url);
+    }
+
     public Task<TenraiAnimeRecommendationResponseDto?> GetAnimeRecommendationAsync(int id)
     {
         string url = $"anime/{id}/recommendations";
         return GetAsync<TenraiAnimeRecommendationResponseDto>(url);
+    }
+    public Task<TenraiAnimeReviewsResponseDto?> GetAnimeReviewsAsync(int id, int page = 1)
+    {
+        string url = $"anime/{id}/reviews?page={page}";
+        return GetAsync<TenraiAnimeReviewsResponseDto>(url);
     }
     public Task<TenraiAnimeCharactersResponseDto?> GetAnimeCharactersAsync (int id)
     {

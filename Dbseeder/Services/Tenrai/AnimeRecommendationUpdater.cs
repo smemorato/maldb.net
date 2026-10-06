@@ -83,7 +83,7 @@ public class AnimeRecommendationUpdater : AnimeUpdaterBase<TenraiAnimeRecommenda
                 .ToHashSet();
 
             var toRemove = anime.RecommendationsFrom
-                .Where(r => !dtoMalIds.Contains(r.Anime2Id))
+                .Where(r => !dtoMalIds.Contains(r.Anime2.MalId))
                 .ToList();
 
             foreach (var rem in toRemove)

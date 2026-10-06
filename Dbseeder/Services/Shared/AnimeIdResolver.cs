@@ -60,7 +60,8 @@ public class AnimeIdResolver
         string? startDate = null,
         string? status = null,
         bool onlyNew = true,
-        DateOnly? lastUpdate = null)
+        DateOnly? lastUpdate = null,
+        int? startFrom = null)
     {
         var query = _db.Animes.AsQueryable();
 
@@ -83,6 +84,10 @@ public class AnimeIdResolver
         {
             query = query.Where(a => a.LastTenraiUpdate < lastUpdate );
         }
+        if (startFrom != null)
+        {
+            query = query.Where(a => a.MalId >= startFrom );
+        }
 
         return await query
             .Select(a => a.MalId)
@@ -90,4 +95,52 @@ public class AnimeIdResolver
             .OrderBy(id => id)
             .ToListAsync();
     }
+
+
+        public async Task<List<int>> ResolveFromCharacterTable(
+        string? username = null,
+        string? startDate = null,
+        string? status = null,
+        bool onlyNew = true,
+        DateOnly? lastUpdate = null,
+        int? startFromAnimeMalId = null)
+    {
+        var query = _db.Animes
+                    .Include(a => a.AnimeCharacters)
+                    .ThenInclude(ac => ac.Character)
+                    .AsQueryable();
+
+        if (username != null)
+        {
+            query = query.Where(a => a.UserLists.Any(ul => ul.User.Username == username));
+        }
+
+        if (startDate != null)
+        {
+            query = query.Where(a => a.UserLists.Any(ul => ul.StartDate.CompareTo(startDate) >= 0));
+        }
+
+        if (status != null)
+        {
+            query = query.Where(a => a.UserLists.Any(ul => ul.Status == status));
+        }
+
+        if (lastUpdate != null)
+        {
+            query = query.Where(a => a.LastTenraiUpdate < lastUpdate );
+        }
+        if (startFromAnimeMalId != null)
+        {
+            query = query.Where(a => a.MalId >= startFromAnimeMalId );
+        }
+
+        return await query
+            .SelectMany(a => a.AnimeCharacters)
+                .Select(ac => ac.Character.MalId)
+            .Distinct()
+            .OrderBy(id => id)
+            .ToListAsync();
+    }
+
+    
 }

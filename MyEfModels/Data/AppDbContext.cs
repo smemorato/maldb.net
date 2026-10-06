@@ -20,6 +20,8 @@ public class MyDbContext: DbContext
     public DbSet<Character> Characters { get; set; }
     public DbSet<Company> Companies { get; set; }
     public DbSet<AnimeRecommendation> AnimeRecommendations { get; set; }
+    public DbSet<AnimeReview> AnimeReviews { get; set; }
+    public DbSet<AnimeEpisode> AnimeEpisodes { get; set; }
     public DbSet<AnimeRelation> AnimeRelations { get; set; }
     public DbSet<User> Users { get; set; }
     public DbSet<UserList> UserList { get; set; }
@@ -73,6 +75,32 @@ public class MyDbContext: DbContext
 
             entity.HasIndex(e => new { e.Anime1Id, e.Anime2Id })
                 .IsUnique();
+        });
+
+
+        modelBuilder.Entity<AnimeReview>(builder =>
+        {
+            builder.HasKey(p => p.Id);
+            
+            builder.HasOne(r => r.Anime)
+            .WithMany( a => a.AnimeReviews)
+            .HasForeignKey(r => r.AnimeId)
+            .OnDelete(DeleteBehavior.Cascade);
+            
+        });
+
+        modelBuilder.Entity<AnimeEpisode>(entity =>
+        {
+            entity.HasKey(p => p.Id);
+
+            entity.HasIndex(e => new { e.AnimeId, e.EpisodeNumber })
+                .IsUnique();
+            
+            entity.HasOne(r => r.Anime)
+            .WithMany( a => a.AnimeEpisodes)
+            .HasForeignKey(r => r.AnimeId)
+            .OnDelete(DeleteBehavior.Cascade);
+            
         });
 
          modelBuilder.Entity<AnimeRelation>(entity =>
